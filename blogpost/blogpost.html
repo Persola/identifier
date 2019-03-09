@@ -1,0 +1,21 @@
+### Identifying Public Figures From Brief Descriptions
+
+My goal was to identify people based on brief descriptions. For example:
+
+puppeteer → Jim Henson
+Pharaoh who worhsipped the sun → Akhenaten
+made pill more expensive → Martin Shkreli
+
+I mapped personal identities (names) to semantic vectors derived from their Wikipedia entries. When a query is submitted, I embedded them in the same space and returned a ranked list of the closest identities.
+
+#### Method
+
+* I downloaded all current English language Wikipedia articles from https://meta.wikimedia.org/wiki/Data_dump_torrents#English_Wikipedia
+  it's a 66 Gb file, so I had to stream it in to extract the briographies
+  * my version from Jan 1 2019
+  * I identified biographies as articles which either:
+    * had a birth or death category tag, e.g. Julius Caesar has `[[Category:100 BC births]]`
+    * person infobox
+    * tried 'people' categories but includes too many peoples and misc
+    * to do: fictional characters
+* Exposed via a flask app
