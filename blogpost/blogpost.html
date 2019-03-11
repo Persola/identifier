@@ -11,11 +11,13 @@ I mapped personal identities (names) to semantic vectors derived from their Wiki
 #### Method
 
 * I downloaded all current English language Wikipedia articles from https://meta.wikimedia.org/wiki/Data_dump_torrents#English_Wikipedia
-  it's a 66 Gb file, so I had to stream it in to extract the briographies
   * my version from Jan 1 2019
+  * it's a 66 Gb file, so I had to stream it in to extract the biographies (used xml.etree.ElementTree.iterparse)
   * I identified biographies as articles which either:
     * had a birth or death category tag, e.g. Julius Caesar has `[[Category:100 BC births]]`
     * person infobox
     * tried 'people' categories but includes too many peoples and misc
     * to do: fictional characters
+  * only used the introductory paragraph
+  * parsed using mwparserfromhell to filter out superfluous elements like references
 * Exposed via a flask app
