@@ -2,10 +2,12 @@ import re
 from collections import Counter
 import unicodedata
 import os
+from itertools import islice
 
 import numpy as np
 import spacy
 from scipy.spatial.distance import cosine
+from pymongo import MongoClient
 
 from biography_streamer import BiographyStreamer
 from introductory_paragraph_streamer import IntroductoryParagraphStreamer
@@ -41,7 +43,7 @@ SPACY_MODEL = 'en_vectors_web_lg'
 # next line only needs to run once, but rerunning is < 1s delay
 # os.system(f'python -m spacy download {SPACY_MODEL}')
 print('loading spaCy model...')
-nlp = spacy.load(SPACY_MODEL)
+nlp = spacy.load(SPACY_MODEL) # TO DO: turn off parts of pipeline
 print('done loading spaCy model')
 
 def chain(*funktions):
@@ -85,16 +87,41 @@ def ranked_names(query_vector, limit=None):
         in distances[:limit]
     ]
 
-with open(SOURCE_PATH, 'rb') as file:
-    bio_streamer = BiographyStreamer(limit=10).stream(file)
-    intro_paras = IntroductoryParagraphStreamer().stream(bio_streamer)
-    encoding_normalized = apply_preserving_names(normalize_encoding, intro_paras)
-    no_parens = apply_preserving_names(strip_parentheticals, encoding_normalized)
-    vectors = apply_preserving_names(lambda x : nlp(x).vector, no_parens)
+def batch(iterator, batch_size):
+    batch_iter = iter(iterator)
+    while(True):
+        try:
+            next(iter(batch_iter))
+            yield islice(batch_iter, batch_size)
+        except StopIteration:
+            return
 
-    hashable_vector_to_name = {}
-    hashable_vector_to_vector = {}    
-    for i, (name, vector) in enumerate(vectors):
-        print(i) if i % 10 == 0 else None
-        hashable_vector_to_name[hashibalize(vector)] = name
-        hashable_vector_to_vector[hashibalize(vector)] = vector
+with open(SOURCE_PATH, 'rb') as file:
+    bio_streamer = BiographyStreamer(limit=None).stream(file)
+    intro_paras = IntroductoryParagraphStreamer().stream(bio_streamer)
+    client = MongoClient()
+    for batch in batch(intro_paras, 1000):
+        client.who.bios.insert_many(
+            [
+                {
+                    'name': name,
+                    'bio': bio
+                }
+                for name, bio
+                in batch
+            ]
+        )
+
+    # encoding_normalized = apply_preserving_names(normalize_encoding, intro_paras)
+    # no_parens = apply_preserving_names(strip_parentheticals, encoding_normalized)
+    # spacy_docs = apply_preserving_names(nlp, no_parens)
+    # vectors = apply_preserving_names(lambda doc : doc.vector, spacy_docs)
+
+    # steps for identification
+
+    # hashable_vector_to_name = {}
+    # hashable_vector_to_vector = {}    
+    # for i, (name, vector) in enumerate(vectors):
+    #     print(i) if i % 10 == 0 else None
+    #     hashable_vector_to_name[hashibalize(vector)] = name
+    #     hashable_vector_to_vector[hashibalize(vector)] = vector
