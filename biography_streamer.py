@@ -1,6 +1,8 @@
 import re
 import xml.etree.ElementTree as etree
 
+import pdb
+
 class BiographyStreamer():
     '''
         Streams the texts of biographical Wikipedia articles.
@@ -12,27 +14,32 @@ class BiographyStreamer():
         file (truncate the stream with 'limit').
     '''
 
+    # match titles of 'meta'(?) pages that start with prefixes like
+    # 'Wikipedia:', 'Portal:', 'Template:', 'Talk:', or 'Help:'
+    META_PAGE_TITLE = r'^\w+:\S'
     # re matchers for things that appear in Wikitext
     BIRTH_OR_DEATH_CATEGORY_TAG = r'\[\[Category:\s*\d+(?:[\w-]+)? (?:\w+ )?(?:births|deaths)'
     PERSON_INFOBOX = r'\{\{Infobox person'
     CATEGORY_TAG_WITH_PEOPLE = r'\[\[Category:.*[Pp]eople[^s]'
     # [[Category:Year of birth missing (living people)]]
 
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, limit=None):
+        self.limit = limit
 
-    def stream(self, limit=None):
+    def stream(self, file, limit=None):
+        self.limit = (self.limit or limit)
         bio_count = 0
-        for _, el in etree.iterparse(self.file):
+        for _, el in etree.iterparse(file):
             if self.is_article(el):
                 revision_el = self.find_child_of_tag(el, 'revision')
                 text_el = self.find_child_of_tag(revision_el, 'text')
+                title_el = self.find_child_of_tag(el, 'title')
                 if self.is_biography(text_el.text):
                     bio_count += 1
-                    if bio_count > limit:
+                    if self.limit and bio_count > self.limit:
                         return
                     title_el = self.find_child_of_tag(el, 'title')
-                    yield text_el.text
+                    yield (title_el.text, text_el.text)
         return
 
     def is_article(self, el):
@@ -43,6 +50,9 @@ class BiographyStreamer():
         if self.strip_tag(el.tag) != 'page':
             return False
         if 'redirect' in self.child_tags(el):
+            return False
+        title_el = self.find_child_of_tag(el, 'title')
+        if re.match(self.META_PAGE_TITLE, title_el.text):
             return False
         return True
 

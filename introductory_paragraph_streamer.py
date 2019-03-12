@@ -2,6 +2,8 @@ import re
 
 import mwparserfromhell
 
+import pdb
+
 class IntroductoryParagraphStreamer():
     '''
         Provided with a stream of Wikipedia article texts, cuts them down to
@@ -18,16 +20,16 @@ class IntroductoryParagraphStreamer():
     }
     MAGIC_WORD = '\_\_[A-Z]+\_\_'
     
-    def __init__(self, article_stream):
-        self.article_stream = article_stream
-        
-    def stream(self):
+    def stream(self, article_stream):
         return (
-            self.extract_introductory_paragraph(
-                mwparserfromhell.parse(article)
+            (
+                name,
+                self.extract_introductory_paragraph(
+                    mwparserfromhell.parse(article)
+                    )
             )
-            for article
-            in self.article_stream
+            for name, article
+            in article_stream
         )
 
     def extract_introductory_paragraph(self, wikicode_node):
