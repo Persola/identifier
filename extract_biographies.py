@@ -42,9 +42,9 @@ def strip_parentheticals(text):
 SPACY_MODEL = 'en_vectors_web_lg'
 # next line only needs to run once, but rerunning is < 1s delay
 # os.system(f'python -m spacy download {SPACY_MODEL}')
-print('loading spaCy model...')
-nlp = spacy.load(SPACY_MODEL) # TO DO: turn off parts of pipeline
-print('done loading spaCy model')
+# print('loading spaCy model...')
+# nlp = spacy.load(SPACY_MODEL) # TO DO: turn off parts of pipeline
+# print('done loading spaCy model')
 
 def chain(*funktions):
     def chained(arg):
@@ -100,7 +100,7 @@ with open(SOURCE_PATH, 'rb') as file:
     bio_streamer = BiographyStreamer(limit=None).stream(file)
     intro_paras = IntroductoryParagraphStreamer().stream(bio_streamer)
     client = MongoClient()
-    for batch in batch(intro_paras, 1000):
+    for batch in batch(intro_paras, 996):
         client.who.bios.insert_many(
             [
                 {

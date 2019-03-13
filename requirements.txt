@@ -1,1 +1,7 @@
-mwparserfromhell=0.5.2
+scipy==1.2.0
+numpy==1.16.0
+lxml==4.3.0
+mwparserfromhell==0.5.2
+spacy==2.0.18
+tqdm==4.30.0
+pymongo==3.7.2

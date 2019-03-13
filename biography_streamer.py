@@ -1,5 +1,5 @@
 import re
-import xml.etree.ElementTree as etree
+from lxml import etree
 
 import pdb
 
@@ -40,6 +40,11 @@ class BiographyStreamer():
                         return
                     title_el = self.find_child_of_tag(el, 'title')
                     yield (title_el.text, text_el.text)
+                    # below: clean up is necessary to keep memory usage constant
+                    # see https://www.ibm.com/developerworks/xml/library/x-hiperfparse/
+                    el.clear()
+                    while el.getprevious() is not None:
+                        del el.getparent()[0]
         return
 
     def is_article(self, el):
