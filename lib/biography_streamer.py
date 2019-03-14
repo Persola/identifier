@@ -1,8 +1,6 @@
 import re
 from lxml import etree
 
-import pdb
-
 class BiographyStreamer():
     '''
         Streams the texts of biographical Wikipedia articles.
@@ -18,7 +16,7 @@ class BiographyStreamer():
     # 'Wikipedia:', 'Portal:', 'Template:', 'Talk:', or 'Help:'
     META_PAGE_TITLE = r'^\w+:\S'
     # re matchers for things that appear in Wikitext
-    BIRTH_OR_DEATH_CATEGORY_TAG = r'\[\[Category:\s*\d+(?:[\w-]+)? (?:\w+ )?(?:births|deaths)'
+    BIRTH_OR_DEATH_CATEGORY_TAG = r'\[\[Category:\s*\d+[\w-]* (?:\w+ )?(?:births|deaths)'
     PERSON_INFOBOX = r'\{\{Infobox person'
     CATEGORY_TAG_WITH_PEOPLE = r'\[\[Category:.*[Pp]eople[^s]'
     # [[Category:Year of birth missing (living people)]]

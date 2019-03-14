@@ -7,13 +7,9 @@ from itertools import islice
 import numpy as np
 import spacy
 from scipy.spatial.distance import cosine
-from pymongo import MongoClient
 
 from biography_streamer import BiographyStreamer
 from introductory_paragraph_streamer import IntroductoryParagraphStreamer
-
-from time import sleep
-import pdb
 
 # path to a copy of pages-articles-multistream.xml
 #   contains all current Wikipedia articles
@@ -120,7 +116,7 @@ with open(SOURCE_PATH, 'rb') as file:
     # steps for identification
 
     # hashable_vector_to_name = {}
-    # hashable_vector_to_vector = {}    
+    # hashable_vector_to_vector = {}
     # for i, (name, vector) in enumerate(vectors):
     #     print(i) if i % 10 == 0 else None
     #     hashable_vector_to_name[hashibalize(vector)] = name

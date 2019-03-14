@@ -2,8 +2,6 @@ import re
 
 import mwparserfromhell
 
-import pdb
-
 class IntroductoryParagraphStreamer():
     '''
         Provided with a stream of Wikipedia article texts, cuts them down to
