@@ -18,8 +18,7 @@ class BiographyStreamer():
     # re matchers for things that appear in Wikitext
     BIRTH_OR_DEATH_CATEGORY_TAG = r'\[\[Category:\s*\d+[\w-]* (?:\w+ )?(?:births|deaths)'
     PERSON_INFOBOX = r'\{\{Infobox person'
-    CATEGORY_TAG_WITH_PEOPLE = r'\[\[Category:.*[Pp]eople[^s]'
-    # [[Category:Year of birth missing (living people)]]
+    LIST_TITLE = r'^List of'
 
     def __init__(self, limit=None):
         self.limit = limit
@@ -32,7 +31,7 @@ class BiographyStreamer():
                 revision_el = self.find_child_of_tag(el, 'revision')
                 text_el = self.find_child_of_tag(revision_el, 'text')
                 title_el = self.find_child_of_tag(el, 'title')
-                if self.is_biography(text_el.text):
+                if self.is_biography(title_el.text, text_el.text):
                     bio_count += 1
                     if self.limit and bio_count > self.limit:
                         return
@@ -75,7 +74,7 @@ class BiographyStreamer():
         first_matching_child_index = self.child_tags(parent).index(tag)
         return parent[first_matching_child_index]
 
-    def is_biography(self, text):
+    def is_biography(self, title, text):
         '''
             Takes an article as a string and identifies whether it is a
             biography. This probably has good precision but lackluster recall.
@@ -83,6 +82,8 @@ class BiographyStreamer():
         return (
             self.any_line_matches(text, self.BIRTH_OR_DEATH_CATEGORY_TAG) or
             self.any_line_matches(text, self.PERSON_INFOBOX)
+        ) and (
+            not re.match(title, self.LIST_TITLE)
         )
 
     def any_line_matches(self, text, uncompiled_pattern):

@@ -7,6 +7,7 @@ from itertools import islice
 import numpy as np
 import spacy
 from scipy.spatial.distance import cosine
+from pymongo import MongoClient
 
 from biography_streamer import BiographyStreamer
 from introductory_paragraph_streamer import IntroductoryParagraphStreamer
