@@ -10,7 +10,12 @@ class FirstSentenceExtractor(FieldMapper):
 
     CHAR_LENGTH_GUESS = 150
 
-    def extract(self, collection_name, new_field_name='first_sentence'):
+    def extract(
+        self,
+        collection_name,
+        new_field_name='first_sentence',
+        verbose=True
+    ):
         self.map_field(
             collection_name,
             'bio',
@@ -19,7 +24,8 @@ class FirstSentenceExtractor(FieldMapper):
                 self.first_sentence,
                 self.strip_parentheticals,
                 self.normalize_encoding
-            ]
+            ],
+            verbose
         )
 
     def first_sentence(self, text):

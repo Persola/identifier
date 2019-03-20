@@ -27,8 +27,8 @@ def extract_biographies(collection_name='bios', limit=None, verbose=True):
         bio_streamer = BiographyStreamer(limit=limit).stream(file)
         intro_paras = IntroductoryParagraphStreamer().stream(bio_streamer)
         collection = MongoClient()[DB_NAME][COLLECTION_NAME]
-        for each_batch in batch(intro_paras, BATCH_SIZE):
-            print(f'inserting batch (max {BATCH_SIZE})...') if verbose else None
+        for i, each_batch in enumerate(batch(intro_paras, BATCH_SIZE)):
+            print(f'inserting batch {i}') if verbose else None
             collection.insert_many(
                 [
                     {

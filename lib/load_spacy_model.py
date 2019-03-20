@@ -1,3 +1,4 @@
+import os
 import spacy
 
 SPACY_MODEL = 'en_vectors_web_lg'

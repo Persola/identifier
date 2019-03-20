@@ -11,13 +11,14 @@ class Vectorizer(FieldMapper):
     '''Adds vector field to collection'''
 
     def __init__(self, nlp=None, verbose=True):
-        self.nlp = (nlp or load_spacy_model())
+        self.nlp = (nlp or load_spacy_model(verbose=verbose))
 
     def vectorize_text(
         self,
         collection_name,
         text_field_name='bios',
-        vector_field_name='vector'
+        vector_field_name='vector',
+        verbose=True
     ):
         self.map_field(
             collection_name,
@@ -29,7 +30,8 @@ class Vectorizer(FieldMapper):
                 self.nlp,
                 lambda doc : doc.vector,
                 self.mongo_compatible
-            ]
+            ],
+            verbose
         )
 
     def mongo_compatible(self, vector):

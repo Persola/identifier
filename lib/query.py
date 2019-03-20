@@ -1,5 +1,4 @@
 import re
-import os
 
 import spacy
 from scipy.spatial.distance import cosine

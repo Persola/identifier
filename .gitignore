@@ -1,5 +1,7 @@
 .DS_Store
 __pycache__/
 .ipynb_checkpoints/
-data/
+data/*.xml
+data/pagecount_totals/pagecounts-*-totals
+data/pagecount_totals/filtered
 reference/*.pdf
