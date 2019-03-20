@@ -5,6 +5,8 @@ import spacy
 from scipy.spatial.distance import cosine
 from pymongo import MongoClient
 
+from load_spacy_model import load_spacy_model
+
 DB_NAME = 'who'
 SPACY_MODEL = 'en_vectors_web_lg'
 
@@ -16,14 +18,7 @@ class Searcher():
         vector_field_name='vector',
         verbose=True
     ):
-        if not nlp:
-            print('downloading spaCy model...') if verbose else None
-            os.system(f'python3 -m spacy download {SPACY_MODEL}')
-            print('...done') if verbose else None
-            print('loading spaCy model...') if verbose else None
-            nlp = spacy.load(SPACY_MODEL) # TO DO: turn off parts of pipeline
-            print('...done') if verbose else None
-        self.nlp = nlp
+        self.nlp = (nlp or load_spacy_model())
         self.hashable_vector_to_name = {}
         self.hashable_vector_to_vector = {}
         if verbose:

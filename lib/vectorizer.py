@@ -3,6 +3,7 @@ import os
 import spacy
 
 from field_mapper import FieldMapper
+from load_spacy_model import load_spacy_model
 
 SPACY_MODEL = 'en_vectors_web_lg'
 
@@ -10,14 +11,7 @@ class Vectorizer(FieldMapper):
     '''Adds vector field to collection'''
 
     def __init__(self, nlp=None, verbose=True):
-        if not nlp:
-            print('downloading spaCy model...') if verbose else None
-            os.system(f'python3 -m spacy download {SPACY_MODEL}')
-            print('...done') if verbose else None
-            print('loading spaCy model...') if verbose else None
-            nlp = spacy.load(SPACY_MODEL) # TO DO: turn off parts of pipeline
-            print('...done') if verbose else None
-        self.nlp = nlp
+        self.nlp = (nlp or load_spacy_model())
 
     def vectorize_text(
         self,
