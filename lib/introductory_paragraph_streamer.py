@@ -24,7 +24,7 @@ class IntroductoryParagraphStreamer():
                 name,
                 self.extract_introductory_paragraph(
                     mwparserfromhell.parse(article)
-                    )
+                )
             )
             for name, article
             in article_stream
