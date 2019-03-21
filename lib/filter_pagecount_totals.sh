@@ -1,5 +1,5 @@
-if ls data/pagecount_totals/*.bz2 1> /dev/null 2>&1; then
-    bunzip2 data/pagecount_totals/*.bz2
+if ls data/monthly_view_totals/*.bz2 1> /dev/null 2>&1; then
+    bunzip2 data/monthly_view_totals/*.bz2
 fi
-rm -f data/pagecount_totals/filtered
-sed -n 's/^\(en\.z .*\)/\1/p' data/pagecount_totals/pagecounts-*-totals >> data/pagecount_totals/filtered
+rm -f data/monthly_view_totals/filtered
+sed -n 's/^\(en\.z .*\)/\1/p' data/monthly_view_totals/pagecounts-*-totals >> data/monthly_view_totals/filtered

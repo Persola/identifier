@@ -2,6 +2,7 @@
 __pycache__/
 .ipynb_checkpoints/
 data/*.xml
-data/pagecount_totals/pagecounts-*-totals
-data/pagecount_totals/filtered
+data/pageviews
+data/monthly_view_totals/pagecounts-*-totals
+data/monthly_view_totals/filtered
 reference/*.pdf
