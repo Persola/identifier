@@ -47,7 +47,7 @@ class PageviewAggregator():
     ):
         bios = MongoClient()[db_name][collection_name]
         for update_count, bio in enumerate(bios.find({}, {'name': 1})):
-            if verbose and update_count % 1000 == 0:
+            if verbose and update_count % 10_000 == 0:
                 print(f'pageview total insertation count: {update_count}')
             bios.update_one(
                 {'_id': bio['_id']},
