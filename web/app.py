@@ -1,4 +1,13 @@
-from flask import Flask, render_template, jsonify, send_file
+import sys
+sys.path.append('../lib/')
+
+from flask import Flask, request, render_template, jsonify, send_file
+import spacy
+
+from query import Searcher
+
+SPACY_MODEL = 'en_vectors_web_lg'
+
 app = Flask('identifier')
 
 @app.route('/')
@@ -19,16 +28,18 @@ def stylesheet():
 
 @app.route('/identify')
 def identify():
-    # return render_template('id_result.json')
     return jsonify({
-        'id_result': [
-            'A test result name 1',
-            'B test result name 2',
-            'C test result name 3',
-            'D test result name 4',
-            'E test result name 5'
-        ]
+        'result': searcher.query(
+            request.args.get('query'),
+            limit=6
+        )
     })
+
+# searcher = Searcher(
+#     spacy.load(SPACY_MODEL),
+#     collection_name='sample_bios',
+#     vector_field_name='fresh_new_vectorization'
+# )
 
 if __name__ == '__main__':
     app.run()

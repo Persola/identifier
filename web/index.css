@@ -1,3 +1,83 @@
 body {
   background-color: #201020;
+  color: #eaeac0;
+  font-family: Georgia, serif;  
+}
+
+.identifier {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.query-form {
+  width: 400px;
+  height: 200px;
+  margin: auto;
+}
+
+.query-form .query {
+  display: block;
+  margin: auto;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+.query-form button {
+  display: block;
+  margin: auto;
+  padding: 4px 10px;
+  font-family: Tahoma, Geneva, sans-serif;
+  font-size: 16px;
+}
+
+.whole-result {
+  display: grid;
+  grid-row-gap: 20px;
+}
+
+.result-person {
+  width: 800px;
+  height: 200px;
+  background-color: #904060;
+}
+
+.name {
+  font-size: 32px;
+}
+
+.intro-text {
+  font-size: 16px;
+}
+
+.portrait-wrapper {
+  position: relative;
+}
+
+.portrait {
+  position: absolute;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+}
+
+.signature {
+  padding: 40px;
+  text-align: center;
+  color: #806060;
+}
+
+.signature a {
+  color: #806060;
+}
+
+.signature a:hover {
+  color: #b0a0a0;
 }

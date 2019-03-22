@@ -1,4 +1,5 @@
 import re
+from math import log
 
 import spacy
 from scipy.spatial.distance import cosine
@@ -32,18 +33,28 @@ class Searcher():
 
     def _closest_bios(self, query_vector, limit):
         matches = []
-        for candidate in self.bios.find({}, {'name': 1, self.vector_field_name: 1}):
+        candidates = self.bios.find({}, {
+            'name': 1,
+            'views': 1,
+            self.vector_field_name: 1
+        })
+        for candidate in candidates:
             candidate_rank = self._rank(query_vector, candidate)
             if len(matches) < limit:
                 self._sorted_insert(matches, candidate_rank, limit, grow=True)
-            elif candidate_rank['rank'] < matches[-1]['rank']:
+            elif candidate_rank['rank'] > matches[-1]['rank']:
                 self._sorted_insert(matches, candidate_rank, limit)
         return matches
 
     def _rank(self, query_vector, candidate):
+        cosine_similarity = 1 - cosine(query_vector, candidate[self.vector_field_name])
+        prominence = candidate['views']**(1/500)
         return {
             'name': candidate['name'],
-            'rank': cosine(query_vector, candidate[self.vector_field_name])
+            'cosine_distance': cosine_similarity,
+            'views': candidate['views'],
+            'prominence': prominence,
+            'rank': cosine_similarity * prominence
         }
 
     def _sorted_insert(self, matches, candidate_rank, limit, grow=False):
@@ -58,7 +69,7 @@ class Searcher():
         if len(matches) == 0:
             return 0
         for match_index, match in enumerate(matches):
-            if candidate_rank['rank'] < match['rank']:
+            if candidate_rank['rank'] > match['rank']:
                 return match_index
         if len(matches) < limit:
             return len(matches)
