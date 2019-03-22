@@ -35,11 +35,7 @@ def identify():
         )
     })
 
-# searcher = Searcher(
-#     spacy.load(SPACY_MODEL),
-#     collection_name='sample_bios',
-#     vector_field_name='fresh_new_vectorization'
-# )
+searcher = Searcher(spacy.load(SPACY_MODEL))
 
 if __name__ == '__main__':
     app.run()

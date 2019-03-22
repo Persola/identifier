@@ -1,20 +1,12 @@
 body {
-  background-color: #201020;
-  color: #eaeac0;
-  font-family: Georgia, serif;  
+  background-color: #fdfdfd;
+  color: #040404;
+  font-family: Tahoma, Geneva, sans-serif;
 }
 
 .identifier {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-}
-
-a {
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
 }
 
 .query-form {
@@ -34,19 +26,19 @@ a:hover {
   display: block;
   margin: auto;
   padding: 4px 10px;
-  font-family: Tahoma, Geneva, sans-serif;
   font-size: 16px;
 }
 
-.whole-result {
+.all-results {
   display: grid;
   grid-row-gap: 20px;
+  font-family: Georgia, serif;  
 }
 
-.result-person {
+.result {
   width: 800px;
   height: 200px;
-  background-color: #904060;
+  background-color: #f0f0d8;
 }
 
 .name {
@@ -71,13 +63,15 @@ a:hover {
 .signature {
   padding: 40px;
   text-align: center;
-  color: #806060;
+  color: #040420;
 }
 
 .signature a {
-  color: #806060;
+  font-weight: 600;
+  text-decoration: none;
+  color: #201060;
 }
 
 .signature a:hover {
-  color: #b0a0a0;
+  color: #6010a0;
 }

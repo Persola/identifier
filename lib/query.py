@@ -36,6 +36,7 @@ class Searcher():
         candidates = self.bios.find({}, {
             'name': 1,
             'views': 1,
+            'first_sentence': 1,
             self.vector_field_name: 1
         })
         for candidate in candidates:
@@ -54,7 +55,8 @@ class Searcher():
             'cosine_distance': cosine_similarity,
             'views': candidate['views'],
             'prominence': prominence,
-            'rank': cosine_similarity * prominence
+            'rank': cosine_similarity * prominence,
+            'first_sentence': candidate['first_sentence']
         }
 
     def _sorted_insert(self, matches, candidate_rank, limit, grow=False):
