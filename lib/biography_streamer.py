@@ -49,6 +49,8 @@ class BiographyStreamer():
                 revision_el = self.first_child_of_tag(el, 'revision')
                 text_el = self.first_child_of_tag(revision_el, 'text')
                 title_el = self.first_child_of_tag(el, 'title')
+                if not text_el.text:
+                    next
                 if self.is_biography(title_el.text, text_el.text):
                     if self.limit and bio_count > self.limit:
                         return

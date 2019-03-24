@@ -1,6 +1,5 @@
 import re
 import unicodedata
-
 from pymongo import MongoClient
 
 DB_NAME = 'who'
@@ -21,9 +20,7 @@ class FieldMapper():
     ):
         db = MongoClient()[DB_NAME]
         current_stream = self.id_text_tuples(db[collection], source_field_name)
-        # print('in')
         for transformation in transformations:
-            # print('t')
             current_stream = self.apply_preserving_id(transformation, current_stream)
         for i, (doc_id, new_field_val) in enumerate(current_stream):
             if verbose and i % 1000 == 0:

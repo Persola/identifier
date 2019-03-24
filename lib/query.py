@@ -1,9 +1,8 @@
 import re
-from math import log
 
-import spacy
-from scipy.spatial.distance import cosine
+import numpy as np
 from pymongo import MongoClient
+from sklearn.neighbors import KDTree
 
 from load_spacy_model import load_spacy_model
 
@@ -17,62 +16,48 @@ class Searcher():
         self,
         nlp=None,
         collection_name='bios',
-        vector_field_name='vector',
+        vector_field_name='normalized_vector',
         verbose=True
     ):
         self.nlp = (nlp or load_spacy_model())
         self.bios = MongoClient()[DB_NAME][collection_name]
         self.vector_field_name = vector_field_name
+        self._build_tree(verbose)
+
+    def _build_tree(self, verbose):
+        bio_count = self.bios.count_documents({})
+        dimension_count = len(next(self.bios.find({}))[self.vector_field_name])
+        all_vectors = np.zeros((bio_count, dimension_count))
+        self.np_index_to_mongo_id = {}
+        for ind, bio in enumerate(self.bios.find({})):
+            self.np_index_to_mongo_id[ind] = bio['_id']
+            all_vectors[ind] = bio[self.vector_field_name]
+        if verbose:
+            print('building KDTree...')
+        self.tree = KDTree(all_vectors, leaf_size=2)              
+        if verbose:
+            print('...done')
 
     def query(self, query_str, limit=DEFAULT_RESULT_LIMIT):
         '''
             Given a query as a string, returns a ranked list of the most
             relevant biographies.
         '''
-        return self._closest_bios(self.nlp(query_str).vector, limit)
+        normalized_query = self._normalize(self.nlp(query_str).vector).reshape(1, -1)
+        _, nearest_indices = self.tree.query(normalized_query, k=limit)
+        return [self._bio_for_ind(ind) for ind in nearest_indices[0]]
 
-    def _closest_bios(self, query_vector, limit):
-        matches = []
-        candidates = self.bios.find({}, {
-            'name': 1,
-            'views': 1,
-            'first_sentence': 1,
-            self.vector_field_name: 1
-        })
-        for candidate in candidates:
-            candidate_rank = self._rank(query_vector, candidate)
-            if len(matches) < limit:
-                self._sorted_insert(matches, candidate_rank, limit, grow=True)
-            elif candidate_rank['rank'] > matches[-1]['rank']:
-                self._sorted_insert(matches, candidate_rank, limit)
-        return matches
-
-    def _rank(self, query_vector, candidate):
-        cosine_similarity = 1 - cosine(query_vector, candidate[self.vector_field_name])
-        prominence = candidate['views']**(1/500)
-        return {
-            'name': candidate['name'],
-            'cosine_distance': cosine_similarity,
-            'views': candidate['views'],
-            'prominence': prominence,
-            'rank': cosine_similarity * prominence,
-            'first_sentence': candidate['first_sentence']
-        }
-
-    def _sorted_insert(self, matches, candidate_rank, limit, grow=False):
-        matches.insert(
-            self._insert_index(matches, candidate_rank, limit),
-            candidate_rank
+    def _normalize(self, vector):
+        length = np.linalg.norm(vector)
+        return np.array(vector) / length
+        
+    def _bio_for_ind(self, ind):
+        return next(
+            self.bios.find({
+                '_id': self.np_index_to_mongo_id[ind]
+            }, {
+                'name': 1,
+                'views': 1,
+                'first_sentence': 1
+            })
         )
-        if not grow:
-            matches.pop()
-
-    def _insert_index(self, matches, candidate_rank, limit):
-        if len(matches) == 0:
-            return 0
-        for match_index, match in enumerate(matches):
-            if candidate_rank['rank'] > match['rank']:
-                return match_index
-        if len(matches) < limit:
-            return len(matches)
-        raise ValueError('Match candidate does not fit within match list')
