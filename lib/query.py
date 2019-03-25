@@ -68,8 +68,8 @@ class Searcher():
             
     def _tree_path(self):
         return os.path.join(
-            __file__,
-            f'kd_trees/{self.collection_name}-{self.vector_field_name}'
+            os.path.dirname(__file__),
+            f'../kd_trees/{self.collection_name}-{self.vector_field_name}'
         )
 
     def query(self, query_str, limit=DEFAULT_RESULT_LIMIT):
@@ -90,6 +90,7 @@ class Searcher():
             self.bios.find({
                 '_id': self.np_index_to_mongo_id[ind]
             }, {
+                '_id': 0,
                 'name': 1,
                 'views': 1,
                 'first_sentence': 1
