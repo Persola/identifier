@@ -4,74 +4,104 @@ body {
   font-family: Tahoma, Geneva, sans-serif;
 }
 
+::selection {
+  background: #eaeac4;  
+}
+
 .identifier {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
 .query-form {
-  width: 400px;
-  height: 200px;
-  margin: auto;
+  width: 600px;
+  margin: 0 auto 0 auto;
 }
 
 .query-form .query {
   display: block;
-  margin: auto;
-  max-width: 200px;
+  margin: 60px auto 0 auto;
+  height: 32px;
+  width: 472px;
+  padding: 4px;
+  font-size: 16px;
   word-wrap: break-word;
+  text-align: center;
 }
 
 .query-form button {
   display: block;
-  margin: auto;
+  margin: 40px auto 0 auto;
   padding: 4px 10px;
   font-size: 16px;
+  background-color: #d8d8d8;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 4px;
+}
+
+.query-form button:hover {
+  cursor: pointer;
+  background-color: #e0e0d8;
 }
 
 .all-results {
   display: grid;
+  margin: 40px auto;
   grid-row-gap: 20px;
   font-family: Georgia, serif;  
 }
 
+.loading-message {
+  text-align: center;
+  font-size: 32px;
+  color: #b0b0b0;
+  font-family: Tahoma, Geneva, sans-serif;
+}
+
+.result-link {
+  margin: 0 auto;
+  text-decoration: none;
+  color: #000;
+}
+
 .result {
-  width: 800px;
-  height: 200px;
+  width: 480px;
+  color: #221f00;
   background-color: #f0f0d8;
 }
 
+.result:hover {
+  background-color: #f6f6d8;
+}
+
 .name {
-  font-size: 32px;
+  font-size: 24px;
+  padding: 10px 0 0 15px;
 }
 
 .intro-text {
-  font-size: 16px;
-}
-
-.portrait-wrapper {
-  position: relative;
-}
-
-.portrait {
-  position: absolute;
-  right: 20px;
-  width: 100px;
-  height: 100px;
+  font-size: 14px;
+  margin: 10px 30px;
+  padding-bottom: 20px;
 }
 
 .signature {
-  padding: 40px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 14px;
   text-align: center;
   color: #040420;
+  margin: 15px 20px;
 }
 
 .signature a {
-  font-weight: 600;
   text-decoration: none;
-  color: #201060;
+  color: #040420;
 }
 
 .signature a:hover {
-  color: #6010a0;
+  color: #201060;
 }

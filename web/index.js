@@ -11,25 +11,22 @@ const createResultDiv = (result) => {
   introText.className = 'intro-text'
   introText.innerHTML = result.first_sentence
 
-  const textWrapperDiv = document.createElement('div');
+  const linkEl = document.createElement('a');
+  linkEl.className = 'result-link'
+  linkEl.href = 'https://en.wikipedia.org/wiki/' + result.name.replace(' ', '_')
 
-  const portrait = document.createElement('img');
-  portrait.className = 'portrait'
-  portrait.src = 'https://i1.sndcdn.com/artworks-000144544913-kzrf5c-t500x500.jpg'
-
-  const portraitWrapper = document.createElement('div');
-  portraitWrapper.className = 'portrait-wrapper'
+  const fadeMaskEl = document.createElement('div');
+  fadeMaskEl.className = 'fade-mask'
 
   const resultEl = document.createElement('div');
-  resultEl.className = 'result'
-  
-  textWrapperDiv.appendChild(name)
-  textWrapperDiv.appendChild(introText)
-  portraitWrapper.appendChild(portrait)
-  resultEl.appendChild(textWrapperDiv)
-  resultEl.appendChild(portraitWrapper)
+  resultEl.className = 'result'  
 
-  return resultEl
+  resultEl.appendChild(name)
+  resultEl.appendChild(introText)
+  resultEl.appendChild(fadeMaskEl)
+  linkEl.appendChild(resultEl)
+
+  return linkEl
 };
 
 const updateResults = (results) => {
@@ -56,7 +53,17 @@ const identify = (query) => {
   xhr.send();
 };
 
+const displayLoadingMessage = () => {
+  const loadMessageEl = document.createElement('div');
+  loadMessageEl.className = 'loading-message'
+  loadMessageEl.innerHTML = 'loading'
+  const allResultsEl = $('.all-results');
+  allResultsEl.innerHTML = '';
+  allResultsEl.appendChild(loadMessageEl);
+};
+
 const handleButtonClick = () => {
+  displayLoadingMessage();
   const query = $('.query').value;
   identify(query);
 };
