@@ -5,3 +5,4 @@ mwparserfromhell==0.5.2
 spacy==2.0.18
 tqdm==4.30.0
 pymongo==3.7.2
+sklearn==0.20.3

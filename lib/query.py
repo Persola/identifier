@@ -1,8 +1,10 @@
 import re
 
+import pickle
 import numpy as np
 from pymongo import MongoClient
 from sklearn.neighbors import KDTree
+import os
 
 from load_spacy_model import load_spacy_model
 
@@ -17,12 +19,18 @@ class Searcher():
         nlp=None,
         collection_name='bios',
         vector_field_name='normalized_vector',
+        load_tree=False,
         verbose=True
     ):
-        self.nlp = (nlp or load_spacy_model())
-        self.bios = MongoClient()[DB_NAME][collection_name]
+        self.collection_name = collection_name
         self.vector_field_name = vector_field_name
-        self._build_tree(verbose)
+        self.bios = MongoClient()[DB_NAME][collection_name]
+        self.nlp = (nlp or load_spacy_model())
+        if load_tree:
+            self.load_tree(verbose)
+        else:
+            self._build_tree(verbose)
+            self.save_tree(verbose)
 
     def _build_tree(self, verbose):
         bio_count = self.bios.count_documents({})
@@ -38,6 +46,32 @@ class Searcher():
         if verbose:
             print('...done')
 
+    def load_tree(self, verbose):
+        if verbose:
+            print('loading tree...')
+        with open(self._tree_path(), 'rb') as tree_file:
+            self.np_index_to_mongo_id, self.tree = pickle.load(tree_file)
+        if verbose:
+            print('...done')
+
+    def save_tree(self, verbose):
+        if verbose:
+            print('saving tree to disk...')
+        with open(self._tree_path(), 'wb') as tree_file:
+            pickle.dump(
+                (self.np_index_to_mongo_id, self.tree),
+                tree_file,
+                protocol=4
+            )
+        if verbose:
+            print('...done')
+            
+    def _tree_path(self):
+        return os.path.join(
+            __file__,
+            f'kd_trees/{self.collection_name}-{self.vector_field_name}'
+        )
+
     def query(self, query_str, limit=DEFAULT_RESULT_LIMIT):
         '''
             Given a query as a string, returns a ranked list of the most
@@ -50,7 +84,7 @@ class Searcher():
     def _normalize(self, vector):
         length = np.linalg.norm(vector)
         return np.array(vector) / length
-        
+
     def _bio_for_ind(self, ind):
         return next(
             self.bios.find({
