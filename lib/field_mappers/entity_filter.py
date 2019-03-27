@@ -9,7 +9,7 @@ sys.path.append(
 from field_mapper import FieldMapper
 from load_spacy_model import load_spacy_model
 
-class IntroCleaner(FieldMapper):
+class EntityFilter(FieldMapper):
     def __init__(
         self,
         nlp=None,
@@ -19,11 +19,11 @@ class IntroCleaner(FieldMapper):
     ):
         self.collection_name = collection_name
         self.source_field_name = source_field_name
-        self.nlp = (nlp or load_spacy_model())
+        self.nlp = (nlp or load_spacy_model('en_core_web_lg'))
 
-    def clean(
+    def filter(
         self,
-        new_field_name='clean_intro',
+        new_field_name='entities',
         verbose=True
     ):
         self.map_field(
@@ -31,16 +31,15 @@ class IntroCleaner(FieldMapper):
             self.source_field_name,
             new_field_name,
             [
-                self.clean_intro
+                self.extract_entities
             ],
             verbose
         )
 
-    def clean_intro(self, intro_para):
-        doc = self.nlp(intro_para)
+    def extract_entities(self, text):
         return ' '.join([
-            str(token)
-            for token
-            in doc
-            if not token.is_stop
+            str(ent)
+            for ent
+            in self.nlp(text).ents
+            if not re.match('\d\d', str(ent))
         ])
